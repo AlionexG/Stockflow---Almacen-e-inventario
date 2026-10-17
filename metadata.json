@@ -1,0 +1,6 @@
+{
+  "name": "StockFlow - Almacén & Ganancias",
+  "description": "Control inteligente de inventario con fotos, cálculo de gastos, envíos y ganancias netas, sincronizado en tiempo real con Google Sheets y exportación de reportes.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+    <title>StockFlow - Almacén & Ganancias</title>
+    <meta name="description" content="Control inteligente de inventario con fotos, cálculo de gastos, envíos y ganancias netas, sincronizado en tiempo real con Google Sheets y exportación de reportes." />
+    <meta property="og:title" content="StockFlow - Almacén & Ganancias" />
+    <meta property="og:description" content="Control inteligente de inventario con fotos, cálculo de gastos, envíos y ganancias netas, sincronizado en tiempo real con Google Sheets y exportación de reportes." />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#0F172A" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="StockFlow" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" crossorigin="use-credentials" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/pwa-192x192.png" />
+    <link rel="icon" type="image/svg+xml" href="/vincit-emblem.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+      // Capture PWA install prompt early before React bundle evaluates
+      window.__stockflowDeferredPrompt = null;
+      window.addEventListener('beforeinstallprompt', function(e) {
+        e.preventDefault();
+        window.__stockflowDeferredPrompt = e;
+        window.dispatchEvent(new CustomEvent('stockflow-deferred-prompt-ready'));
+      });
+      window.addEventListener('appinstalled', function() {
+        window.__stockflowDeferredPrompt = null;
+        window.dispatchEvent(new CustomEvent('stockflow-app-installed'));
+      });
+    </script>
+    <script>
+      (function() {
+        try {
+          var originalFetch = window.fetch;
+          Object.defineProperty(window, 'fetch', {
+            get: function() {
+              return originalFetch;
+            },
+            set: function(val) {
+              originalFetch = val;
+            },
+            configurable: true,
+            enumerable: true,
+          });
+        } catch (err) {}
+
+        window.addEventListener('error', function(event) {
+          if (
+            (event.filename && event.filename.indexOf('chrome-extension://') !== -1) ||
+            (event.message && (
+              event.message.indexOf('fetch of #<Window>') !== -1 ||
+              event.message.indexOf('Cannot set property fetch') !== -1
+            ))
+          ) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            return true;
+          }
+        }, true);
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
+            .catch(function(err) { console.warn('SW register error:', err); });
+        });
+      }
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
